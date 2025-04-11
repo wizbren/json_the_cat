@@ -1,31 +1,25 @@
 const needle = require('needle');
-const breedName = process.argv[2];
-const url = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
+const fetchBreedDescription = function (breedName, callback) {
+  const url = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
 
-//Error and process exit if no breed name provided
-if (!breedName) {
-  console.log("Please provide breed name");
-  process.exit(1);
-}
+//GET request
+  needle.get(url, (error, response, body) => {
+    if (error) {
+      callback(`Error fetching data: ${error}`, null);
+      return;
+    }
 
+//Checks to make sure body has data
+    if (!body || body.length === 0) {
+      callback(`"${breedName}" not found`, null);
+      return;
+    }
 
-//This is the GET request, passing url as first argument, and
-//an anonymous callback as second argument
-needle.get(url, (error, response, body) => {
-  if (error) {
-    console.error("Error fetching data: ", error);
-    return;
-  }
-//Checks if its an array of obj, then prints the object
-  console.log("Type of body: ", typeof body);
-//Logs body content to make data visible
-  console.log("Body content: ", body);
-
-  //Checks to ensure body contains data
-  if (body && body.length > 0) {
+//Pulls breed description
     const breed = body[0];
-    console.log(`${breedName} is generally ${breed.description}`);
-  } else {
-    console.log(`"${breedName}" not found`);
-  };
-});
+    callback(null, breed.description);
+  })
+};
+
+
+module.exports = { fetchBreedDescription };
