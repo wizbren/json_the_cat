@@ -19,5 +19,6 @@
   "homepage": "https://github.com/wizbren/json_the_cat#readme",
   "dependencies": {
     "needle": "^3.3.1"
-  }
+  },
+  "devDependencies": {}
 }
